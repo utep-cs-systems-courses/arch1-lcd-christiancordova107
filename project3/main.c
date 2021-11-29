@@ -3,6 +3,7 @@
 #include "lcdutils.h"
 #include "lcddraw.h"
 #include "lcddraw.c"
+#include "argument_for_update_shape1.h"
 
 // WARNING: LCD DISPLAY USES P1.0.  Do not touch!!!
 
@@ -17,6 +18,8 @@
 
 #define SWITCHES 15
 
+//void argument_for_update_shape1(int a);
+extern void argument_for_update_shape2(int a);
 void update_shape(char *text, short textColomn, u_int backgroundC, u_int textC, u_int diamondC);
 
 short redrawScreen = 1;
@@ -51,6 +54,7 @@ static int sw4Down;
 void
 switch_interrupt_handler()
 {
+  int state = 0;
   char p2val = switch_update_interrupt_sense();
   switches = ~p2val & SWITCHES;
   
@@ -62,18 +66,24 @@ switch_interrupt_handler()
   redrawScreen = 1;
     
   if(sw1Down) {
-    update_shape("I Love CS", 20, COLOR_GREEN, COLOR_WHITE, COLOR_RED);
+    state = 1;
+    //update_shape("I Love CS", 20, COLOR_GREEN, COLOR_WHITE, COLOR_RED);
   }
   else if(sw2Down) {
-    update_shape("I Love Utep", 10, COLOR_BLUE, COLOR_ORANGE, COLOR_ORANGE);
+    state = 2;
+    //update_shape("I Love Utep", 10, COLOR_BLUE, COLOR_ORANGE, COLOR_ORANGE);
   }
 
   else if(sw3Down) {
-    update_shape("CR7 SI!", 30, COLOR_TORQUOISE, COLOR_BLACK, COLOR_TORQUOISE);
+    state = 3;
+    //update_shape("CR7 SI!", 30, COLOR_TORQUOISE, COLOR_BLACK, COLOR_TORQUOISE);
   }
   else if(sw4Down) {
-    clearScreen(COLOR_BLUE);
+    state = 4;
+    //clearScreen(COLOR_BLUE);
   }
+
+  argument_for_update_shape1(state);
 }
 
 
@@ -111,7 +121,6 @@ void main()
 
   clearScreen(COLOR_BLUE);
   
-  //drawString11x16(20, screenHeight / 2 - 30,"I Love CS", COLOR_WHITE, COLOR_RED);
   while (1) {			/* forever */
     if (redrawScreen) {
       redrawScreen = 0;
@@ -120,6 +129,42 @@ void main()
     P1OUT &= ~LED;	/* led off */
     or_sr(0x10);	/**< CPU OFF */
     P1OUT |= LED;	/* led on */
+  }
+}
+
+/*
+void argument_for_update_shape1(int a) {
+  switch(a) {
+  case 1:
+    argument_for_update_shape2(1);
+    break;
+  case 2:
+    argument_for_update_shape2(2);
+    break;
+  case 3:
+    argument_for_update_shape2(3);
+    break;
+  case 4:
+    argument_for_update_shape2(4);
+    break;
+  default:
+    break;
+  }
+}
+*/
+void argument_for_update_shape2(int a) {
+  if(a == 1) {
+    update_shape("I Love CS", 20, COLOR_GREEN, COLOR_WHITE, COLOR_RED);
+  }
+  else if(a == 2) {
+    update_shape("I Love Utep", 10, COLOR_BLUE, COLOR_ORANGE, COLOR_ORANGE);
+  }
+
+  else if(a == 3) {
+    update_shape("CR7 SI!", 30, COLOR_TORQUOISE, COLOR_BLACK, COLOR_TORQUOISE);
+  }
+  else if(a == 4) {
+    clearScreen(COLOR_BLUE);
   }
 }
 
